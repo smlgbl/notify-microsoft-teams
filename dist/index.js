@@ -1363,7 +1363,7 @@ const workflow_link = `[${workflow}](${repository.html_url}/actions?query=workfl
 const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
-const pr_link = `[PR](${repository.html_url}/pull/${number})`
+const pr_link = `[PR](${repository.html_url}/pulls)`
 const changelog = commits.length ? `${commits.reduce((o, c) => console.dir(c) || o + '\n+ ' + c.message)}` : undefined;
 const outputs2markdown = (outputs) =>
 	Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
