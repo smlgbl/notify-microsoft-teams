@@ -20,7 +20,8 @@ const {
 	},
 	eventName,
 	workflow,
-	sha
+	sha,
+	number
 } = github;
 
 const statuses = [
@@ -85,6 +86,7 @@ const workflow_link = `[${workflow}](${repository.html_url}/actions?query=workfl
 const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
+const pr_link = `[PR](${repository.html_url}/pull/${number})`
 const changelog = commits.length ? `**Changelog:**${commits.reduce((o, c) => console.dir(c) || o + '\n+ ' + c.message, '\n')}` : undefined;
 const outputs2markdown = (outputs) =>
 	Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
@@ -147,6 +149,15 @@ class MSTeams {
 			activityImage
 		};
 
+		const changelog_summary = {
+			facts: [
+				{
+					name: "Changelog",
+					value: changelog
+				}
+			]
+		}
+
 		const sections = [
 			...steps_summary,
 			...needs_summary,
@@ -156,15 +167,23 @@ class MSTeams {
 			...this.header,
 			correlationId: sha,
 			themeColor: color,
-			title: `${sender.login} ${eventName} initialised workflow "${workflow}"`,
+			title: `${workflow}`,
 			summary: repository_link,
 			sections,
+			text: `by **${sender.login}** on **${repository.name}**`
 			potentialAction: [
 				{
 					"@type": "OpenUri",
 					name: "Repository",
 					targets: [
 						{ os: "default", uri: repository.html_url }
+					]
+				},
+				{
+					"@type": "OpenUri",
+					name: "PR",
+					targets: [
+						{ os: "default", uri: pr_link }
 					]
 				},
 				{
@@ -177,7 +196,7 @@ class MSTeams {
 			]
 		};
 		if (changelog) {
-			payload.text = changelog
+			payload.sections.push(changelog_summary)
 		}
 		if (overwrite !== '') {
 			return merge(
