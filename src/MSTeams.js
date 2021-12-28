@@ -20,7 +20,9 @@ const {
 	},
 	eventName,
 	workflow,
-	sha
+	sha,
+	number,
+	pull_request
 } = github;
 
 const statuses = [
@@ -85,7 +87,7 @@ const workflow_link = `[${workflow}](${repository.html_url}/actions?query=workfl
 const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
-const pr_link = `[PR](${repository.html_url}/pulls)`
+const pr_link = number ? `[PR](${repository.html_url}/pull/${number})` : `[PR](${repository.html_url}/pulls)`
 const changelog = commits.length ? `${commits.reduce((o, c) => console.dir(c) || o + '\n+ ' + c.message)}` : undefined;
 const outputs2markdown = (outputs) =>
 	Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
@@ -157,7 +159,7 @@ class MSTeams {
 			...this.header,
 			correlationId: sha,
 			themeColor: color,
-			title: `${workflow}`,
+			title: pull_request ? `[PR] ${pull_request.title}`: `${workflow}`,
 			summary: repository_link,
 			sections,
 			text: `by **${sender.login}** on **${repository.name}**`,
@@ -195,16 +197,6 @@ class MSTeams {
 				]
 			}
 			payload.sections.push(changelog_summary)
-		}
-
-		if (github && Object.keys(github).length > 0) {
-			const event_summary = {facts: []}
-			Object.keys(github).forEach(key => event_summary.facts.push({
-				name: key,
-				value: github[key]
-			}))
-
-			payload.sections.push(event_summary)
 		}
 
 		if (overwrite !== '') {
