@@ -1294,12 +1294,12 @@ const {
 			url: placeholder
 		},
 		commits = [],
-		head_commit = { timestamp: placeholder }
+		head_commit = { timestamp: placeholder },
+		pull_request
 	},
 	eventName,
 	workflow,
-	sha,
-	pull_request
+	sha
 } = github;
 
 const statuses = [
@@ -1364,7 +1364,7 @@ const workflow_link = `[${workflow}](${repository.html_url}/actions?query=workfl
 const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
-const pr_link = pull_request ? `[PR](${pull_request._links.self})` : `[PRs](${repository.html_url}/pulls)`
+const pr_link = pull_request ? `[PR](${pull_request._links.self})` : undefined;
 const changelog = commits.length ? `${commits.reduce((o, c) => console.dir(c) || o + '\n+ ' + c.message)}` : undefined;
 const outputs2markdown = (outputs) =>
 	Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
