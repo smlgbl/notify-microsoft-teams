@@ -1475,9 +1475,9 @@ class MSTeams {
 			payload.sections.push(changelog_summary)
 		}
 
-		if (github && github.keys().length > 0) {
+		if (github && Object.keys(github).length > 0) {
 			const event_summary = {facts: []}
-			github.keys().forEach(key => event_summary.facts.push({
+			Object.keys(github).forEach(key => event_summary.facts.push({
 				name: key,
 				value: github[key]
 			}))
