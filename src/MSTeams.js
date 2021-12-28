@@ -20,8 +20,7 @@ const {
 	},
 	eventName,
 	workflow,
-	sha,
-	number
+	sha
 } = github;
 
 const statuses = [
@@ -149,15 +148,6 @@ class MSTeams {
 			activityImage
 		};
 
-		const changelog_summary = {
-			facts: [
-				{
-					name: "Changelog",
-					value: changelog
-				}
-			]
-		}
-
 		const sections = [
 			...steps_summary,
 			...needs_summary,
@@ -196,8 +186,27 @@ class MSTeams {
 			]
 		};
 		if (changelog) {
+			const changelog_summary = {
+				facts: [
+					{
+						name: "Changelog",
+						value: changelog
+					}
+				]
+			}
 			payload.sections.push(changelog_summary)
 		}
+
+		if (github && github.keys().length > 0) {
+			const event_summary = {facts: []}
+			github.keys().forEach(key => event_summary.facts.push({
+				name: key,
+				value: github[key]
+			}))
+
+			payload.sections.push(event_summary)
+		}
+
 		if (overwrite !== '') {
 			return merge(
 				payload,
