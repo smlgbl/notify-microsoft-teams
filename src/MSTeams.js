@@ -87,7 +87,7 @@ const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = `[PR](${repository.html_url}/pull/${number})`
-const changelog = commits.length ? `**Changelog:**${commits.reduce((o, c) => console.dir(c) || o + '\n+ ' + c.message, '\n')}` : undefined;
+const changelog = commits.length ? `${commits.reduce((o, c) => console.dir(c) || o + '\n+ ' + c.message)}` : undefined;
 const outputs2markdown = (outputs) =>
 	Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
 
@@ -170,7 +170,7 @@ class MSTeams {
 			title: `${workflow}`,
 			summary: repository_link,
 			sections,
-			text: `by **${sender.login}** on **${repository.name}**`
+			text: `by **${sender.login}** on **${repository.name}**`,
 			potentialAction: [
 				{
 					"@type": "OpenUri",
