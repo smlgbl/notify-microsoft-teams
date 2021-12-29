@@ -88,7 +88,7 @@ const workflow_link = `[${workflow}](${repository.html_url}/actions?query=workfl
 const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
-const pr_link = pull_request ? `${repository.html_url}/pull/${pull_request.number}` : undefined;
+const pr_link = pull_request ? `${pull_request.html_url}` : undefined;
 const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + c.message, placeholder)}` : undefined;
 const title_text = head_commit ? `[Push] ${head_commit.message}` : pull_request ? `[PR] ${pull_request.title}`: `${sender.login} ${eventName} initialised workflow "${workflow}"`;
 const outputs2markdown = (outputs) =>
