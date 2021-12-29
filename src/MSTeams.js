@@ -16,7 +16,7 @@ const {
 			url: placeholder
 		},
 		commits = [],
-		head_commit = { timestamp: placeholder },
+		head_commit,
 		pull_request
 	},
 	eventName,
@@ -24,13 +24,15 @@ const {
 	sha
 } = github;
 
+const timestamp = head_commit ? head_commit.timestamp : pull_request ? pull_request.updated_at : placeholder;
+
 const statuses = [
 	{
 		id: 'success',
 		icon: '✓',
 		color: '#2cbe4e',
 		activityTitle: "Success!",
-		activitySubtitle: head_commit.timestamp,
+		activitySubtitle: timestamp,
 		activityImage: "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/success.png"
 
 	},
@@ -39,7 +41,7 @@ const statuses = [
 		icon: '✗',
 		color: '#cb2431',
 		activityTitle: "Failure",
-		activitySubtitle: head_commit.timestamp,
+		activitySubtitle: timestamp,
 		activityImage: "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/failure.png"
 
 	},
@@ -48,7 +50,7 @@ const statuses = [
 		icon: 'o',
 		color: '#ffc107',
 		activityTitle: "Cancelled",
-		activitySubtitle: head_commit.timestamp,
+		activitySubtitle: timestamp,
 		activityImage: "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/cancelled.png"
 	},
 	{
@@ -56,7 +58,7 @@ const statuses = [
 		icon: '⤼',
 		color: '#1a6aff',
 		activityTitle: "Skipped",
-		activitySubtitle: head_commit.timestamp,
+		activitySubtitle: timestamp,
 		activityImage: "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/skipped.png"
 	},
 	{
@@ -64,7 +66,7 @@ const statuses = [
 		icon: '?',
 		color: '#999',
 		activityTitle: 'No job context has been provided',
-		activitySubtitle: head_commit.timestamp,
+		activitySubtitle: timestamp,
 		activityImage: "https://raw.githubusercontent.com/Skitionek/notify-microsoft-teams/master/icons/unknown.png"
 	}
 ];
@@ -87,7 +89,8 @@ const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = pull_request ? `${repository.html_url}/pull/${pull_request.number}` : undefined;
-const changelog = commits.length ? `${commits.reduce((o, c) => console.dir(c) || o + '\n+ ' + c.message)}` : undefined;
+const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + c.message)}` : undefined;
+const title_text = head_commit ? `[Push] ${head_commit.message}` : pull_request ? `[PR] ${pull_request.title}`: `${workflow}`;
 const outputs2markdown = (outputs) =>
 	Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
 
@@ -158,7 +161,7 @@ class MSTeams {
 			...this.header,
 			correlationId: sha,
 			themeColor: color,
-			title: pull_request ? `[PR] ${pull_request.title}`: `${workflow}`,
+			title: title_text,
 			summary: repository_link,
 			sections,
 			text: `by **${sender.login}** on **${repository.name}**`,
