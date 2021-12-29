@@ -1367,7 +1367,7 @@ const payload_link = `[${eventName}](${compare})`;
 const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = pull_request ? `${repository.html_url}/pull/${pull_request.number}` : undefined;
-const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + c.message)}` : undefined;
+const changelog = commits.length > 0 ? `${commits.reduce((o, c) => o + '\n+ ' + c.message)}` : undefined;
 const title_text = head_commit ? `[Push] ${head_commit.message}` : pull_request ? `[PR] ${pull_request.title}`: `${workflow}`;
 const outputs2markdown = (outputs) =>
 	Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
