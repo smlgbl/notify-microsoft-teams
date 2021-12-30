@@ -34081,6 +34081,7 @@ const {
 	},
 	eventName,
 	workflow,
+	run_id,
 	sha
 } = github;
 
@@ -34144,9 +34145,7 @@ function Status(status) {
 	return r
 }
 
-const workflow_link = `[${workflow}](${repository.html_url}/actions?query=workflow%3A${workflow}})`;
-const payload_link = `[${eventName}](${compare})`;
-const sender_link = `[${sender.login}](${sender.url})`;
+const workflow_run_link = `${repository.html_url}/actions/runs/${run_id}`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = pull_request ? `${pull_request.html_url}` : undefined;
 const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + c.message, placeholder)}` : undefined;
@@ -34235,9 +34234,16 @@ class MSTeams {
 				},
 				{
 					"@type": "OpenUri",
-					name: "PR",
+					name: "Pull Request",
 					targets: [
 						{ os: "default", uri: pr_link }
+					]
+				},
+				{
+					"@type": "OpenUri",
+					name: "Workflow Run",
+					targets: [
+						{ os: "default", uri: workflow_run_link }
 					]
 				},
 				{
