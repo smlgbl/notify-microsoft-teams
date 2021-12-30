@@ -84,9 +84,6 @@ function Status(status) {
 	return r
 }
 
-const workflow_link = `[${workflow}](${repository.html_url}/actions?query=workflow%3A${workflow}})`;
-const payload_link = `[${eventName}](${compare})`;
-const sender_link = `[${sender.login}](${sender.url})`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = pull_request ? `${pull_request.html_url}` : undefined;
 const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + c.message, placeholder)}` : undefined;
@@ -134,7 +131,8 @@ class MSTeams {
 			job = { status: 'unknown' },
 			steps = {},
 			needs = {},
-			overwrite = ''
+			overwrite = '',
+			run_id = undefined
 		}
 	) {
 		const steps_summary = summary_generator(steps, 'outcome');
@@ -175,9 +173,16 @@ class MSTeams {
 				},
 				{
 					"@type": "OpenUri",
-					name: "PR",
+					name: "Pull Request",
 					targets: [
 						{ os: "default", uri: pr_link }
+					]
+				},
+				{
+					"@type": "OpenUri",
+					name: "Workflow Run",
+					targets: [
+						{ os: "default", uri: run_id ? `${repository.html_url}/actions/runs/${run_id}` : `${repository.html_url}/actions?query=workflow%3A${workflow}` }
 					]
 				},
 				{
@@ -200,7 +205,7 @@ class MSTeams {
 			}
 			payload.sections.push(changelog_summary)
 		}
-
+		
 		if (overwrite !== '') {
 			return merge(
 				payload,
