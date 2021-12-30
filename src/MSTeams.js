@@ -17,11 +17,11 @@ const {
 		},
 		commits = [],
 		head_commit,
-		pull_request
+		pull_request,
+		run_id
 	},
 	eventName,
 	workflow,
-	run_id,
 	sha
 } = github;
 
@@ -85,7 +85,7 @@ function Status(status) {
 	return r
 }
 
-const workflow_run_link = `${repository.html_url}/actions/runs/${run_id}`;
+const workflow_link = run_id ? `${repository.html_url}/actions/runs/${run_id}` : `${repository.html_url}/actions?query=workflow%3A${workflow}`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = pull_request ? `${pull_request.html_url}` : undefined;
 const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + c.message, placeholder)}` : undefined;
@@ -183,7 +183,7 @@ class MSTeams {
 					"@type": "OpenUri",
 					name: "Workflow Run",
 					targets: [
-						{ os: "default", uri: workflow_run_link }
+						{ os: "default", uri: workflow_link }
 					]
 				},
 				{
