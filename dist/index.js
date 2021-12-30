@@ -34267,6 +34267,8 @@ class MSTeams {
 			payload.sections.push(changelog_summary)
 		}
 
+		core.info(`github context: \n${JSON.stringify(github)}`);
+
 		if (overwrite !== '') {
 			return merge(
 				payload,
