@@ -130,6 +130,7 @@ jobs:
           overwrite: "{title: `Overwrote title in ${workflow_link}`}"
           job: ${{ toJson(job) }}
           steps: ${{ toJson(steps) }}
+          run_id: ${{ github.run_id }}
           dry_run: ${{ !github.event.action == 'release' }}
 
   with_raw:
@@ -146,7 +147,7 @@ jobs:
             {
               "@type": "MessageCard",
               "@context": "http://schema.org/extensions",
-              "title": "No ${variables} avaliable in here",
-              "text": "Lorem ipssum"
+              "title": "No ${variables} available in here",
+              "text": "Lorem ipsum"
             }
           dry_run: ${{ !github.event.action == 'release' }}

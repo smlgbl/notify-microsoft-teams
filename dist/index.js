@@ -34077,8 +34077,7 @@ const {
 		},
 		commits = [],
 		head_commit,
-		pull_request,
-		run_id
+		pull_request
 	},
 	eventName,
 	workflow,
@@ -34145,7 +34144,6 @@ function Status(status) {
 	return r
 }
 
-const workflow_link = run_id ? `${repository.html_url}/actions/runs/${run_id}` : `${repository.html_url}/actions?query=workflow%3A${workflow}`;
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = pull_request ? `${pull_request.html_url}` : undefined;
 const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + c.message, placeholder)}` : undefined;
@@ -34193,7 +34191,8 @@ class MSTeams {
 			job = { status: 'unknown' },
 			steps = {},
 			needs = {},
-			overwrite = ''
+			overwrite = '',
+			run_id = undefined
 		}
 	) {
 		const steps_summary = summary_generator(steps, 'outcome');
@@ -34243,7 +34242,7 @@ class MSTeams {
 					"@type": "OpenUri",
 					name: "Workflow Run",
 					targets: [
-						{ os: "default", uri: workflow_link }
+						{ os: "default", uri: run_id ? `${repository.html_url}/actions/runs/${run_id}` : `${repository.html_url}/actions?query=workflow%3A${workflow}` }
 					]
 				},
 				{
@@ -34266,9 +34265,7 @@ class MSTeams {
 			}
 			payload.sections.push(changelog_summary)
 		}
-
-		core.info(`github context: \n${JSON.stringify(github)}`);
-
+		
 		if (overwrite !== '') {
 			return merge(
 				payload,
@@ -34534,12 +34531,12 @@ async function run() {
 			);
 		}
 
-
 		let job = access_context('job');
 		let steps = access_context('steps');
 		let needs = access_context('needs');
 
 		let overwrite = core.getInput('overwrite');
+		let run_id = core.getInput('run_id');
 		let raw = core.getInput('raw');
 		let dry_run = core.getInput('dry_run');
 
@@ -34550,6 +34547,7 @@ async function run() {
 			needs,
 			raw,
 			overwrite,
+			run_id,
 			dry_run
 		})}`);
 
@@ -34561,7 +34559,8 @@ async function run() {
 					job,
 					steps,
 					needs,
-					overwrite
+					overwrite,
+					run_id
 				}
 			);
 		} else {
