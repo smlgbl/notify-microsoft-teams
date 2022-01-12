@@ -91,7 +91,7 @@ function oneLineFromMultilineCommitMsg(msg) {
 const repository_link = `[${repository.full_name}](${repository.html_url})`;
 const pr_link = pull_request ? `${pull_request.html_url}` : undefined;
 const changelog = commits.length ? `${commits.reduce((o, c) => o + '\n+ ' + oneLineFromMultilineCommitMsg(c.message), placeholder)}` : undefined;
-const title_text = head_commit ? `[Push] ${head_commit.message.replace(/\n.*/g, '')}` : pull_request ? `[PR] ${pull_request.title}` : `${sender.login}: ${eventName} initialised workflow "${workflow}"`;
+const title_text = head_commit ? `[Push] ${head_commit.message.replace(/\n.*/g, '')}` : pull_request ? `[PR] ${pull_request.title}` : `${eventName == 'workflow_dispatch' ? 'Manually' : eventName} triggered "${workflow}"`;
 const outputs2markdown = (outputs) =>
     Object.keys(outputs).reduce((o, output_name) => o + `+ ${output_name}:${'\n'}\`\`\`${outputs[output_name]}\`\`\``, '');
 
