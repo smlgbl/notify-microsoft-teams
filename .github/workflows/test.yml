@@ -36,27 +36,6 @@ jobs:
           steps: ${{ toJson(steps) }}
           dry_run: ${{ !github.event.action == 'release' }}
 
-  steps_one:
-    name: One with steps
-    needs: success
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Checkout from version control
-        uses: actions/checkout@master
-      - name: Do nothing 1
-        uses: skitionek/star-wars-quote-action@master
-      - name: Do nothing 2
-        uses: skitionek/star-wars-quote-action@master
-      - name: MSTeams Notification
-        uses: ./
-        if: always()
-        with:
-          webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
-          needs: ${{ toJson(needs) }}
-          job: ${{ toJson(job) }}
-          steps: ${{ toJson(steps) }}
-          dry_run: ${{ !github.event.action == 'release' }}
-
   failure:
     name: One failure
     runs-on: ubuntu-18.04
